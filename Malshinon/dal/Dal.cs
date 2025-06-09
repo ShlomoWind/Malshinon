@@ -47,5 +47,39 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        public People GetPersonByName(string name)
+        {
+            People people = null;
+            string query = @"SELECT * FROM people WHERE first_name = @first_name";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@first_name", name);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    people = new People(
+                        reader.GetInt32("id"),
+                        reader.GetString("first_name"),
+                        reader.GetString("last_name"),
+                        reader.GetString("secret_code"),
+                        reader.GetString("type"),
+                        reader.GetInt32("num_reports"),
+                        reader.GetInt32("num_mentions")
+                        );
+                }
+                reader.Close();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error selected {name}" + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return people;
+        }
     }
 }
