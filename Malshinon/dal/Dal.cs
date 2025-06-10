@@ -178,7 +178,69 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
-        public void GetReporterStats()
+        public (int,double) GetReporterStats(int reporterId)
+        {
+            string query = @"SELECT COUNT(*) AS count, AVG(CHAR_LENGTH(text)) AS avgLength FROM intelreports WHERE reporter_id = @reporter_id";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@reporter_id", reporterId);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    int count = reader.GetInt32("count");
+                    double avgLength = reader.GetDouble("avgLength");
+                    return (count, avgLength);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error return statistic of reporter: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return (0, 0);
+        }
+        public (int,int) GetTargetStats(string secretCode)
+        {
+            string query = @"SELECT p.num_mentions AS totalMentions COUNT(i.id) AS mentionsLast15Min
+                           FROM People
+                           LEFT JOIN intelreports i
+                           ON i.target_id = p.id 
+                           AND i.timestamp >= NOW() - INTERVAL 15 MINUTE
+                           WHERE p.secret_code = @secret_code
+                           GROUP BY p.num_mentions";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@secret_code", secretCode);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    int totalMentions = reader.GetInt32("totalMentions");
+                    int mentionsLast15Min = reader.GetInt32("mentionsLast15Min");
+                    return (totalMentions, mentionsLast15Min);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error return statistic of reporter: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return (0, 0);
+        }
+        public void CreateAlert()
+        {
+            
+        }
+        public string GetAlert()
         {
 
         }
