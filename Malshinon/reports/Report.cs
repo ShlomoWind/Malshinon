@@ -21,5 +21,11 @@ namespace Malshinon.reports
             this.text = text;
             this.timestamp = timestamp;
         }
+        public Report(int reporter_id, int target_id, string text)
+        {
+            this.id = id;
+            this.reporter_id = reporter_id;
+            this.target_id = target_id;
+        }
     }
 }
