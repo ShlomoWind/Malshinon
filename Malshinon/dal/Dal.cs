@@ -48,15 +48,16 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
-        public People GetPersonByName(string name)
+        public People GetPersonByName(string firstName,string lastName)
         {
             People people = null;
-            string query = @"SELECT * FROM people WHERE first_name = @first_name";
+            string query = @"SELECT * FROM people WHERE first_name = @first_name AND last_name = @last_name";
             try
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
-                cmd.Parameters.AddWithValue("@first_name", name);
+                cmd.Parameters.AddWithValue("@first_name", firstName);
+                cmd.Parameters.AddWithValue("@last_name", lastName);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
