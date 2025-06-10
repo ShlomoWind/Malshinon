@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="dal\Dal.cs" />
+    <Compile Include="input\HelpManager.cs" />
     <Compile Include="input\Manager.cs" />
     <Compile Include="input\SecretCode.cs" />
     <Compile Include="people\People.cs" />
