@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Malshinon.people;
+using Malshinon.reports;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Crypto.Parameters;
 
@@ -80,6 +81,106 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
             return people;
+        }
+        public People GetPersonBySecretCode(string codeName)
+        {
+            People people = null;
+            string query = @"SELECT * FROM people WHERE secret_code = @secret_code";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@secret_code", codeName);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    people = new People(
+                        reader.GetInt32("id"),
+                        reader.GetString("first_name"),
+                        reader.GetString("last_name"),
+                        reader.GetString("secret_code"),
+                        reader.GetString("type"),
+                        reader.GetInt32("num_reports"),
+                        reader.GetInt32("num_mentions")
+                        );
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error selected {codeName}" + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return people;
+        }
+        public void InseIntelReport(Report report)
+        {
+            string query = @"INSERT INTO intalreports(reporter_id,target_id,text)
+                           VALUES(@reporter_id,@target_id,@text)";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@reporter_id", report.reporter_id);
+                cmd.Parameters.AddWithValue("@target_id", report.target_id);
+                cmd.Parameters.AddWithValue("@text",report.text);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error adding report: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+        }
+        public void UpdateReportCount(string secretCode)
+        {
+            string query = @"UPDATE people SET num_reports = num_reports + 1  
+                           WHERE(secret_code = @secret_code)";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@secret_code",secretCode);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error update report count: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+        }
+        public void UpdateMentionCount(string secretCode)
+        {
+            string query = @"UPDATE people SET num_mentions = num_mentions + 1  
+                           WHERE(secret_code = @secret_code)";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@secret_code", secretCode);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error update mentions count: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+        }
+        public void GetReporterStats()
+        {
+
         }
     }
 }
