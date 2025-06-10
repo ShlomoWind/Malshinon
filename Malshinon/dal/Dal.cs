@@ -116,9 +116,9 @@ namespace Malshinon.dal
             }
             return people;
         }
-        public void InseIntelReport(Report report)
+        public void InsertIntelReport(Report report)
         {
-            string query = @"INSERT INTO intalreports(reporter_id,target_id,text)
+            string query = @"INSERT INTO intelreports(reporter_id,target_id,text)
                            VALUES(@reporter_id,@target_id,@text)";
             try
             {
@@ -180,7 +180,7 @@ namespace Malshinon.dal
         }
         public (int,double) GetReporterStats(int reporterId)
         {
-            string query = @"SELECT COUNT(*) AS count, AVG(CHAR_LENGTH(text)) AS avgLength FROM intelreports WHERE reporter_id = @reporter_id";
+            string query = @"SELECT COUNT(*) AS count, AVG(CHAR_LENGTH(text)) AS avgLength FROM intelreports WHERE reporter_id = @reporter_id";
             try
             {
                 this.Conn.Open();
@@ -206,8 +206,8 @@ namespace Malshinon.dal
         }
         public (int,int) GetTargetStats(string secretCode)
         {
-            string query = @"SELECT p.num_mentions AS totalMentions COUNT(i.id) AS mentionsLast15Min
-                           FROM People
+            string query = @"SELECT p.num_mentions AS totalMentions, COUNT(i.id) AS mentionsLast15Min
+                           FROM People p
                            LEFT JOIN intelreports i
                            ON i.target_id = p.id 
                            AND i.timestamp >= NOW() - INTERVAL 15 MINUTE
@@ -235,14 +235,6 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
             return (0, 0);
-        }
-        public void CreateAlert()
-        {
-            
-        }
-        public string GetAlert()
-        {
-
         }
     }
 }
