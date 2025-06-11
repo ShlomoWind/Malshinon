@@ -24,6 +24,7 @@ namespace Malshinon.input
             {
                 this.helper.CreateNewPerson(reporterFirstName, reporterLastName, "reporter");
             }
+            string report = this.helper.EnterReport();
             var reporter = this.dal.GetPersonByName(reporterFirstName, reporterLastName);
             if (this.PotentialAgent(reporter.id))
             {
@@ -34,7 +35,6 @@ namespace Malshinon.input
                 this.dal.UpdateStatus(reporterFirstName, reporterLastName,"both");
             }
             this.dal.UpdateReportCount(reporter.secret_code);
-            string report = this.helper.EnterReport();
             (string targetFirstName, string targetLastName) = this.helper.ExtractName(report);
             if (!this.helper.ExistsInSystem(targetFirstName, targetLastName))
             {

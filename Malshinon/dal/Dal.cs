@@ -70,7 +70,8 @@ namespace Malshinon.dal
                         reader.GetString("secret_code"),
                         reader.GetString("type"),
                         reader.GetInt32("num_reports"),
-                        reader.GetInt32("num_mentions")
+                        reader.GetInt32("num_mentions"),
+                        reader.GetBoolean("is_dangerous")
                         );
                 }
                 reader.Close();
@@ -104,7 +105,8 @@ namespace Malshinon.dal
                         reader.GetString("secret_code"),
                         reader.GetString("type"),
                         reader.GetInt32("num_reports"),
-                        reader.GetInt32("num_mentions")
+                        reader.GetInt32("num_mentions"),
+                        reader.GetBoolean("is_dangerous")
                         );
                 }
                 reader.Close();
@@ -131,8 +133,6 @@ namespace Malshinon.dal
                 cmd.Parameters.AddWithValue("@target_id", report.target_id);
                 cmd.Parameters.AddWithValue("@text",report.text);
                 cmd.ExecuteNonQuery();
-                Console.WriteLine("נוסף");
-
             }
             catch (Exception ex)
             {
@@ -183,9 +183,9 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
-        public (int,double) GetReporterStats(int reporterId)
+        public (int num_reports,double avg_chars) GetReporterStats(int reporterId)
         {
-            string query = @"SELECT COUNT(*) AS count, AVG(CHAR_LENGTH(text)) AS avgLength FROM intelreports WHERE reporter_id = @reporter_id";
+            string query = @"SELECT COUNT(*) AS count, AVG(CHAR_LENGTH(text)) AS avgLength FROM intalreports WHERE reporter_id = @reporter_id";
             try
             {
                 this.Conn.Open();
@@ -195,7 +195,7 @@ namespace Malshinon.dal
                 if (reader.Read())
                 {
                     int count = reader.GetInt32("count");
-                    double avgLength = reader.GetDouble("avgLength");
+                    double avgLength = reader.IsDBNull(reader.GetOrdinal("avgLength")) ? 0.0 : reader.GetDouble("avgLength");
                     return (count, avgLength);
                 }
             }
@@ -281,7 +281,8 @@ namespace Malshinon.dal
                         reader.GetString("secret_code"),
                         reader.GetString("type"),
                         reader.GetInt32("num_reports"),
-                        reader.GetInt32("num_mentions")
+                        reader.GetInt32("num_mentions"),
+                        reader.GetBoolean("is_dangerous")
                         );
                     potentialList.Add(people);
                 }
@@ -295,6 +296,64 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
             return potentialList;
+        }
+        public void MarkAsDangerous(string secretCode)
+        {
+            string query = @"UPDATE people 
+                     SET is_dangerous = TRUE 
+                     WHERE secret_code = @secret_code 
+                     AND num_mentions >= 20 
+                     AND is_dangerous = FALSE";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@secret_code", secretCode);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error update status to danger: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+        }
+        public List<People> AllDangersPeople()
+        {
+            string query = "SELECT * FROM people WHERE is_dangerous = '1'";
+            List<People> dangerslList = new List<People>();
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    People people = new People
+                        (
+                        reader.GetInt32("id"),
+                        reader.GetString("first_name"),
+                        reader.GetString("last_name"),
+                        reader.GetString("secret_code"),
+                        reader.GetString("type"),
+                        reader.GetInt32("num_reports"),
+                        reader.GetInt32("num_mentions"),
+                        reader.GetBoolean("is_dangerous")
+                        );
+                    dangerslList.Add(people);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error selected list of all potential agents" + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return dangerslList;
         }
     }
 }

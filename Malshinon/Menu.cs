@@ -23,36 +23,32 @@ namespace Malshinon
         public void UserManagement()
         {
             Console.WriteLine("Hi please enter Are you: \n1.Reporter \n2.Manager");
-            string choise = Console.ReadLine();
-            if(choise == "1")
+            string choice = Console.ReadLine();
+            if(choice == "1")
             {
                 manager.StartUsing();
             }
-            else if(choise == "2")
+            else if(choice == "2")
             {
-                //הפניה לתפריט השלושה
+                Console.WriteLine("Hi please enter your selection: \n1. View the list of potential agents \n2. View the list of dangerous targets \n3. View active alerts");
+                string answer = Console.ReadLine();
+                switch (answer)
+                {
+                    case "1":
+                        helper.PrintPeopleList(dal.AllPotentialAgents());
+                        break;
+                    case "2":
+                        helper.PrintPeopleList(dal.AllDangersPeople());
+                        break;
+                    case "3":
+                        Console.WriteLine("working!!!");
+                        break;
+                }
             }
             else
             {
                 Console.WriteLine("Sorry, wrong choice, please try again.");
-                UserManagement();
-            }
-        }
-        public void AdminMenu()
-        {
-            Console.WriteLine("");
-            string choise = Console.ReadLine();
-            switch (choise)
-            {
-                case "1":
-                    helper.PrintPotentialAgentsList(dal.AllPotentialAgents());
-                    break;
-                case "2":
-                    //הצגת המטרות המסוכנות
-                    break;
-                case "3":
-                    //הצגת ההתראות הפעילות
-                    break;
+                this.UserManagement();
             }
         }
     }

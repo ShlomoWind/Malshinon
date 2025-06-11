@@ -12,9 +12,8 @@ namespace Malshinon
     {
         static void Main(string[] args)
         {
-            var Dal = new Dal();
-            var Manager = new Manager(Dal);
-            Manager.StartUsing();
+            Menu menu = new Menu();
+            menu.UserManagement();
         }
     }
 }
