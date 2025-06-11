@@ -26,7 +26,7 @@ namespace Malshinon.people
             this.num_reports = num_reports;
             this.num_mentions = num_mentions;
         }
-        public People(string first_name, string last_name,string secretCode, string type)
+        public People(string first_name, string last_name,string secret_code, string type)
         {
             this.first_name = first_name;
             this.last_name = last_name;

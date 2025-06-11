@@ -4,14 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Malshinon.input
+namespace malshinon1.people
 {
-    static class SecretCode
+    internal static class SecretCode
     {
         public static string CreateSecretCode(string firstName, string lastName)
         {
-            string code = $"{firstName[0]}{firstName[firstName.Length -1]}{lastName[0]}{lastName[lastName.Length -1]}";
-            return code;
+            string secretCode = "";
+            for (int i = 0; i < (firstName.Length < lastName.Length ? firstName.Length : lastName.Length); i++)
+            {
+                if (i % 2 == 0)
+                {
+                    secretCode += firstName[i];
+                }
+                else
+                {
+                    secretCode += lastName[i];
+                }
+            }
+            return secretCode;
         }
     }
 }
