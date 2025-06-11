@@ -25,7 +25,11 @@ namespace Malshinon.input
                 this.helper.CreateNewPerson(reporterFirstName, reporterLastName, "reporter");
             }
             var reporter = this.dal.GetPersonByName(reporterFirstName, reporterLastName);
-            if(reporter.type == "target")
+            if (this.PotentialAgent(reporter.id))
+            {
+                this.dal.UpdateStatus(reporterFirstName, reporterLastName, "potential_agent");
+            }
+            else if(reporter.type == "target")
             {
                 this.dal.UpdateStatus(reporterFirstName, reporterLastName,"both");
             }
