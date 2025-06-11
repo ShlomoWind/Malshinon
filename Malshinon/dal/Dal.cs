@@ -131,6 +131,8 @@ namespace Malshinon.dal
                 cmd.Parameters.AddWithValue("@target_id", report.target_id);
                 cmd.Parameters.AddWithValue("@text",report.text);
                 cmd.ExecuteNonQuery();
+                Console.WriteLine("נוסף");
+
             }
             catch (Exception ex)
             {

@@ -26,6 +26,7 @@ namespace Malshinon.reports
             this.id = id;
             this.reporter_id = reporter_id;
             this.target_id = target_id;
+            this.text = text;
         }
     }
 }
