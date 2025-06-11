@@ -10,7 +10,7 @@ namespace Malshinon.input
     {
         public static string CreateSecretCode(string firstName, string lastName)
         {
-            string code = $"{firstName[0]}{firstName[firstName.Length]}{lastName[0]}{lastName[lastName.Length]}";
+            string code = $"{firstName[0]}{firstName[firstName.Length -1]}{lastName[0]}{lastName[lastName.Length -1]}";
             return code;
         }
     }

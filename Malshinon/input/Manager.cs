@@ -11,9 +11,11 @@ namespace Malshinon.input
     internal class Manager
     {
         private HelpManager helper;
+        private Dal dal;
         public Manager(Dal dal)
         {
             this.helper = new HelpManager(dal);
+            this.dal = dal;
         }
         public void StartUsing()
         {
@@ -22,10 +24,26 @@ namespace Malshinon.input
             {
                 this.helper.CreateNewPerson(reporterFirstName, reporterLastName, "reporter");
             }
-            else
+            var reporter = this.dal.GetPersonByName(reporterFirstName, reporterLastName);
+            if(reporter.type == "target")
             {
-                this.helper.UpdateTargetStatus(reporterFirstName, reporterLastName);
+                this.dal.UpdateStatusBoth(reporterFirstName, reporterLastName);
             }
+            this.dal.UpdateReportCount(reporter.secret_code);
+            string report = this.helper.EnterReport();
+            (string targetFirstName, string targetLastName) = this.helper.ExtractName(report);
+            if (!this.helper.ExistsInSystem(targetFirstName, targetLastName))
+            {
+                this.helper.CreateNewPerson(targetFirstName, targetLastName,"target");
+            }
+            var target = this.dal.GetPersonByName(targetFirstName, targetLastName);
+            if(target.type == "reporter")
+            {
+                this.dal.UpdateStatusBoth(targetFirstName, targetLastName);
+            }
+            this.dal.UpdateMentionCount(target.secret_code);
+            this.helper.CreateNewReport(targetFirstName, targetLastName, reporterFirstName, reporterLastName, report);
         }
+
     }
 }

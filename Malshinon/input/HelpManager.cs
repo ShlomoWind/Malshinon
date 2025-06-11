@@ -70,21 +70,5 @@ namespace Malshinon.input
             Report report = new Report(reporterId, targetId, text);
             this.dal.InsertIntelReport(report);
         }
-        public void UpdateReporterStatus(string firstName, string lastName)
-        {
-            var person = this.dal.GetPersonByName(firstName, lastName);
-            if(person.type == "reporter")
-            {
-                this.dal.UpdateStatusBoth(firstName, lastName);
-            }
-        }
-        public void UpdateTargetStatus(string firstName, string lastName)
-        {
-            var person = this.dal.GetPersonByName(firstName, lastName);
-            if (person.type == "target")
-            {
-                this.dal.UpdateStatusBoth(firstName, lastName);
-            }
-        }
     }
 }
