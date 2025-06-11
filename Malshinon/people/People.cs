@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Malshinon.people
 {
-    internal class People
+    public class People
     {
         public int id { get; }
         public string first_name { get; }

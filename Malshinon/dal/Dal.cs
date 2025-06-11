@@ -11,7 +11,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace Malshinon.dal
 {
-    internal class Dal
+    public class Dal
     {
         //create the connection with the database
         private string connStr = "server=localhost;username=root;password=;database=malshinon";
@@ -261,6 +261,40 @@ namespace Malshinon.dal
             {
                 this.Conn.Close();
             }
+        }
+        public List<People> AllPotentialAgents()
+        {
+            string query = "SELECT * FROM people WHERE type = 'potential_agent'";
+            List<People> potentialList = new List<People>();
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    People people = new People
+                        (
+                        reader.GetInt32("id"),
+                        reader.GetString("first_name"),
+                        reader.GetString("last_name"),
+                        reader.GetString("secret_code"),
+                        reader.GetString("type"),
+                        reader.GetInt32("num_reports"),
+                        reader.GetInt32("num_mentions")
+                        );
+                    potentialList.Add(people);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error selected list of all potential agents" + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return potentialList;
         }
     }
 }

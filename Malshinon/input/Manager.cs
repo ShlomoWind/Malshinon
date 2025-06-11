@@ -8,7 +8,7 @@ using Malshinon.dal;
 
 namespace Malshinon.input
 {
-    internal class Manager
+    public class Manager
     {
         private HelpManager helper;
         private Dal dal;
