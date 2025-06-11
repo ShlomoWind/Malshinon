@@ -27,7 +27,7 @@ namespace Malshinon.input
             var reporter = this.dal.GetPersonByName(reporterFirstName, reporterLastName);
             if(reporter.type == "target")
             {
-                this.dal.UpdateStatusBoth(reporterFirstName, reporterLastName);
+                this.dal.UpdateStatus(reporterFirstName, reporterLastName,"both");
             }
             this.dal.UpdateReportCount(reporter.secret_code);
             string report = this.helper.EnterReport();
@@ -39,10 +39,19 @@ namespace Malshinon.input
             var target = this.dal.GetPersonByName(targetFirstName, targetLastName);
             if(target.type == "reporter")
             {
-                this.dal.UpdateStatusBoth(targetFirstName, targetLastName);
+                this.dal.UpdateStatus(targetFirstName, targetLastName,"both");
             }
             this.dal.UpdateMentionCount(target.secret_code);
             this.helper.CreateNewReport(targetFirstName, targetLastName, reporterFirstName, reporterLastName, report);
+        }
+        public bool PotentialAgent(int reporterId)
+        {
+            (int count, double avgLength) = this.dal.GetReporterStats(reporterId);
+            if (count >= 10 || avgLength >= 100)
+            {
+                return true;
+            }
+            return false;
         }
 
     }

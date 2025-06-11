@@ -241,15 +241,16 @@ namespace Malshinon.dal
             }
             return (0, 0);
         }
-        public void UpdateStatusBoth(string firstName, string lastName)
+        public void UpdateStatus(string firstName, string lastName, string status)
         {
-            string query = "UPDATE people SET type = both WHERE first_name = @first_name AND last_name = @last_name";
+            string query = "UPDATE people SET type = @status WHERE first_name = @first_name AND last_name = @last_name";
             try
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
                 cmd.Parameters.AddWithValue("@first_name", firstName);
                 cmd.Parameters.AddWithValue("@last_name", lastName);
+                cmd.Parameters.AddWithValue("@status", status);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
