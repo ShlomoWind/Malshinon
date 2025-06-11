@@ -62,7 +62,8 @@ namespace Malshinon.dal
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    people = new People(
+                    people = new People
+                        (
                         reader.GetInt32("id"),
                         reader.GetString("first_name"),
                         reader.GetString("last_name"),
@@ -120,7 +121,7 @@ namespace Malshinon.dal
         }
         public void InsertIntelReport(Report report)
         {
-            string query = @"INSERT INTO intelreports(reporter_id,target_id,text)
+            string query = @"INSERT INTO intalreports(reporter_id,target_id,text)
                            VALUES(@reporter_id,@target_id,@text)";
             try
             {

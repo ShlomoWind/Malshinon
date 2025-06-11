@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Malshinon.dal;
 using Malshinon.people;
 using Malshinon.reports;
+using malshinon1.people;
 
 namespace Malshinon.input
 {
@@ -66,7 +67,7 @@ namespace Malshinon.input
             var target = this.dal.GetPersonByName(targetFirstName, targetLastName);
             int targetId = target.id;
             var reporter = this.dal.GetPersonByName(reporterFirstName, reporterLastName);
-            int reporterId = target.id;
+            int reporterId = reporter.id;
             Report report = new Report(reporterId, targetId, text);
             this.dal.InsertIntelReport(report);
         }
