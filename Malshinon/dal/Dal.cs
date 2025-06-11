@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Malshinon.input;
 using Malshinon.people;
 using Malshinon.reports;
 using MySql.Data.MySqlClient;
@@ -48,15 +49,16 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
-        public People GetPersonByName(string name)
+        public People GetPersonByName(string firstName,string lastName)
         {
             People people = null;
-            string query = @"SELECT * FROM people WHERE first_name = @first_name";
+            string query = @"SELECT * FROM people WHERE first_name = @first_name AND last_name = @last_name";
             try
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
-                cmd.Parameters.AddWithValue("@first_name", name);
+                cmd.Parameters.AddWithValue("@first_name", firstName);
+                cmd.Parameters.AddWithValue("@last_name", lastName);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
@@ -74,7 +76,7 @@ namespace Malshinon.dal
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"Error selected {name}" + ex.Message);
+                Console.WriteLine($"Error selected {firstName} {lastName}" + ex.Message);
             }
             finally
             {
@@ -235,6 +237,26 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
             return (0, 0);
+        }
+        public void UpdateStatusBoth(string firstName, string lastName)
+        {
+            string query = "UPDATE people SET type = both WHERE first_name = @first_name AND last_name = @last_name";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@first_name", firstName);
+                cmd.Parameters.AddWithValue("@last_name", lastName);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error update type: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
         }
     }
 }
