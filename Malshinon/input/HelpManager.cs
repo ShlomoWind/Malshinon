@@ -71,5 +71,21 @@ namespace Malshinon.input
             Report report = new Report(reporterId, targetId, text);
             this.dal.InsertIntelReport(report);
         }
+        public void PrintPeopleList(List<People> peopleList)
+        {
+            foreach(People people in peopleList)
+            {
+                Console.WriteLine("=================================");
+                Console.WriteLine($"id: {people.id}");
+                Console.WriteLine($"first name: {people.first_name}");
+                Console.WriteLine($"last name: {people.last_name}");
+                Console.WriteLine($"secret code: {people.secret_code}");
+                Console.WriteLine($"type: {people.type}");
+                Console.WriteLine($"reports: {people.num_reports}");
+                Console.WriteLine($"mentions: {people.num_mentions}");
+                Console.WriteLine($"is dangerous: {people.is_dangerous}");
+                Console.WriteLine("=================================");
+            }
+        }
     }
 }

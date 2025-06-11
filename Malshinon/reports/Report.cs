@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Malshinon.reports
 {
-    internal class Report
+    public class Report
     {
         public int id { get; }
         public int reporter_id { get; }
