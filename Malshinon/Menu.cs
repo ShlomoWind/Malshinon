@@ -27,8 +27,7 @@ namespace Malshinon
             if(choice == "1")
             {
                 manager.StartUsing();
-                Console.WriteLine();
-                this.UserManagement();
+                return;
             }
             else if(choice == "2")
             {
@@ -46,7 +45,7 @@ namespace Malshinon
                         break;
                     case "3":
                         Console.WriteLine();
-                        dal.GetAllAlerts();
+                        dal.PrintAllAlerts();
                         break;
                     default:
                         Console.WriteLine();

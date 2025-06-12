@@ -308,7 +308,7 @@ namespace Malshinon.dal
             return potentialList;
         }
         //update a person as dangerous (from true to false) by column is_tanger
-        public void MarkAsDangerous(string secretCode)
+        public void MarkAsDangerous(string secret_code)
         {
             string query = @"UPDATE people 
                      SET is_dangerous = TRUE 
@@ -319,7 +319,7 @@ namespace Malshinon.dal
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
-                cmd.Parameters.AddWithValue("@secret_code", secretCode);
+                cmd.Parameters.AddWithValue("@secret_code", secret_code);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -371,12 +371,12 @@ namespace Malshinon.dal
         public void InsertAlertOfTarget(int target_id)
         {
             string query = @"INSERT INTO alerts(target_id,alert)
-                           VALUES(@target_id,@text)";
+                           VALUES(@target_id,@alert)";
             try
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
-                cmd.Parameters.AddWithValue("@reporter_id", target_id);
+                cmd.Parameters.AddWithValue("@target_id", target_id);
                 cmd.Parameters.AddWithValue("@alert", "Warning! Over 3 reports have been issued on this target in the last fifteen minutes!");
                 cmd.ExecuteNonQuery();
             }
@@ -389,12 +389,12 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
-        public void GetAllAlerts()
+        public void PrintAllAlerts()
         {
             string query = @"SELECT a.alert, p.first_name, p.last_name
                              FROM alerts a
                              JOIN people p 
-                             ON a.target_id = p.id)";
+                             ON a.target_id = p.id";
             try
             {
                 this.Conn.Open();
@@ -405,7 +405,11 @@ namespace Malshinon.dal
                     string first_name = reader.GetString("first_name");
                     string last_name = reader.GetString("last_name");
                     string alert = reader.GetString("alert");
-                    Console.WriteLine($"name: {first_name} {last_name} \n{alert}");
+                    Console.WriteLine("========================================");
+                    Console.WriteLine($"ALERT ON: {first_name} {last_name}");
+                    Console.WriteLine("----------------------------------------");
+                    Console.WriteLine(alert);
+                    Console.WriteLine("========================================\n");
                 }
                 reader.Close();
 

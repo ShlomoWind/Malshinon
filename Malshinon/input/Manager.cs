@@ -47,7 +47,8 @@ namespace Malshinon.input
             }
             this.dal.UpdateMentionCount(target.secret_code);
             this.helper.CreateNewReport(targetFirstName, targetLastName, reporterFirstName, reporterLastName, report);
-            if(this.dal.GetTargetStats(target.secret_code) >= 3)
+            int numReportsIn15Min = this.dal.GetTargetStats(target.secret_code);
+            if (numReportsIn15Min >= 3)
             {
                 this.dal.InsertAlertOfTarget(target.id);
             }
