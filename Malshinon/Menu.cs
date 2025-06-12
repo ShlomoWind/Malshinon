@@ -41,7 +41,7 @@ namespace Malshinon
                         helper.PrintPeopleList(dal.AllDangersPeople());
                         break;
                     case "3":
-                        Console.WriteLine("working!!!");
+                        dal.GetAllAlerts();
                         break;
                     default:
                         Console.WriteLine("Sorry, wrong choice");

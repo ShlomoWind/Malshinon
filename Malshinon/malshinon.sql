@@ -17,3 +17,10 @@ CREATE TABLE IF NOT EXISTS IntelReports (
     FOREIGN KEY (reporter_id) REFERENCES people(id),
     FOREIGN KEY (target_id) REFERENCES people(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS alerts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    target_id INT,
+    alert TEXT,
+    FOREIGN KEY (target_id) REFERENCES people(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;

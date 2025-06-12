@@ -249,6 +249,7 @@ namespace Malshinon.dal
             }
             return mentionsLast15Min;
         }
+        //updates the person's status in the table
         public void UpdateStatus(string firstName, string lastName, string status)
         {
             string query = "UPDATE people SET type = @status WHERE first_name = @first_name AND last_name = @last_name";
@@ -270,6 +271,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //return an list of all people they are potential agents
         public List<People> AllPotentialAgents()
         {
             string query = "SELECT * FROM people WHERE type = 'potential_agent'";
@@ -305,6 +307,7 @@ namespace Malshinon.dal
             }
             return potentialList;
         }
+        //update a person as dangerous (from true to false) by column is_tanger
         public void MarkAsDangerous(string secretCode)
         {
             string query = @"UPDATE people 
@@ -328,6 +331,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //return an list of all people they dangers people
         public List<People> AllDangersPeople()
         {
             string query = "SELECT * FROM people WHERE is_dangerous = '1'";
@@ -362,6 +366,58 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
             return dangerslList;
+        }
+        //insert a worning alert of target in table alerts
+        public void InsertAlertOfTarget(int target_id)
+        {
+            string query = @"INSERT INTO alerts(target_id,alert)
+                           VALUES(@target_id,@text)";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@reporter_id", target_id);
+                cmd.Parameters.AddWithValue("@alert", "Warning! Over 3 reports have been issued on this target in the last fifteen minutes!");
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error adding alert: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+        }
+        public void GetAllAlerts()
+        {
+            string query = @"SELECT a.alert, p.first_name, p.last_name
+                             FROM alerts a
+                             JOIN people p 
+                             ON a.target_id = p.id)";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while(reader.Read())
+                {
+                    string first_name = reader.GetString("first_name");
+                    string last_name = reader.GetString("last_name");
+                    string alert = reader.GetString("alert");
+                    Console.WriteLine($"name: {first_name} {last_name} \n{alert}");
+                }
+                reader.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error printing alerts: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
         }
     }
 }

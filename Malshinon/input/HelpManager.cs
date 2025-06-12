@@ -70,6 +70,7 @@ namespace Malshinon.input
             int reporterId = reporter.id;
             Report report = new Report(reporterId, targetId, text);
             this.dal.InsertIntelReport(report);
+            this.dal.MarkAsDangerous(target.secret_code);
         }
         public void PrintPeopleList(List<People> peopleList)
         {
