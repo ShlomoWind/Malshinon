@@ -43,6 +43,9 @@ namespace Malshinon
                     case "3":
                         Console.WriteLine("working!!!");
                         break;
+                    default:
+                        Console.WriteLine("Sorry, wrong choice");
+                        break;
                 }
             }
             else
