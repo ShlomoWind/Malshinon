@@ -220,7 +220,7 @@ namespace Malshinon.dal
         {
             string query = @"SELECT COUNT(i.id) AS mentionsLast15Min
                              FROM people p
-                             LEFT JOIN intelreports i 
+                             LEFT JOIN intalreports i 
                              ON i.target_id = p.id 
                              AND i.timestamp >= NOW() - INTERVAL 15 MINUTE
                              WHERE p.secret_code = @secret_code";
@@ -252,7 +252,7 @@ namespace Malshinon.dal
         //updates the person's status in the table
         public void UpdateStatus(string firstName, string lastName, string status)
         {
-            string query = "UPDATE people SET type = @status WHERE first_name = @first_name AND last_name = @last_name";
+            string query = "UPDATE people SET type = @status WHERE first_name=@first_name AND last_name=@last_name";
             try
             {
                 this.Conn.Open();
