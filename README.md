@@ -44,7 +44,8 @@ A static class that generates a unique "secret code" from the reporter's first a
 2. Ensure all required namespaces are referenced correctly.
 3. Run `Program.cs`, which starts the application via the `Menu` class.
 
-> Note: This project assumes a data access layer (`Dal`) exists with all relevant methods like `InsertNewPerson`, `GetPersonByName`, `InsertIntelReport`, etc.
+> Note: The project assumes the existence of a data access layer (`Dal`) with methods such as `InsertNewPerson`, `GetPersonByName`, `InsertIntelReport`, and more.  
+Additionally, the project includes a `.SQL` file containing the necessary commands to create the required database tables.
 
 ## Features
 
@@ -60,13 +61,6 @@ A static class that generates a unique "secret code" from the reporter's first a
 - C# (.NET Framework)
 - Console Application
 - Basic OOP Principles
-
-## TODO / Future Improvements
-
-- Add real-time timestamp handling.
-- Store and retrieve data from a persistent database.
-- Create a GUI version (WinForms/WPF or Web).
-- Unit tests for all core logic.
 
 ## Example Interaction
 ![Console Screenshot](exemp1.png)
