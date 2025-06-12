@@ -22,11 +22,12 @@ namespace Malshinon
         }
         public void UserManagement()
         {
-            Console.WriteLine("Hi please enter Are you: \n1.Reporter \n2.Manager");
+            Console.WriteLine("Hi please enter Are you: \n1.Reporter \n2.Manager \n0.Exit");
             string choice = Console.ReadLine();
             if(choice == "1")
             {
                 manager.StartUsing();
+                return;
             }
             else if(choice == "2")
             {
@@ -35,19 +36,31 @@ namespace Malshinon
                 switch (answer)
                 {
                     case "1":
+                        Console.WriteLine();
                         helper.PrintPeopleList(dal.AllPotentialAgents());
                         break;
                     case "2":
+                        Console.WriteLine();
                         helper.PrintPeopleList(dal.AllDangersPeople());
                         break;
                     case "3":
-                        Console.WriteLine("working!!!");
+                        Console.WriteLine();
+                        dal.PrintAllAlerts();
+                        break;
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("Sorry, wrong choice");
                         break;
                 }
+            }
+            else if(choice == "0")
+            {
+                return;
             }
             else
             {
                 Console.WriteLine("Sorry, wrong choice, please try again.");
+                Console.WriteLine();
                 this.UserManagement();
             }
         }

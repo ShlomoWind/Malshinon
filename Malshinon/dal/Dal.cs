@@ -25,7 +25,7 @@ namespace Malshinon.dal
             MySqlCommand cmd = new MySqlCommand(query, this.Conn);
             return cmd;
         }
-        //add a new person to the list
+        //add a new person (type People) to the people table
         public void InsertNewPerson(People people)
         {
             string query = @"INSERT INTO people(first_name,last_name,secret_code,type)
@@ -49,6 +49,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //return a object People from people table by first name and last name
         public People GetPersonByName(string firstName,string lastName)
         {
             People people = null;
@@ -86,6 +87,7 @@ namespace Malshinon.dal
             }
             return people;
         }
+        //return a object People from people table by code name
         public People GetPersonBySecretCode(string codeName)
         {
             People people = null;
@@ -121,6 +123,7 @@ namespace Malshinon.dal
             }
             return people;
         }
+        //add a new report (type Report) to the intalreports table
         public void InsertIntelReport(Report report)
         {
             string query = @"INSERT INTO intalreports(reporter_id,target_id,text)
@@ -143,6 +146,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //update the reporters count with one more
         public void UpdateReportCount(string secretCode)
         {
             string query = @"UPDATE people SET num_reports = num_reports + 1  
@@ -163,6 +167,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //update the mentions count with one more
         public void UpdateMentionCount(string secretCode)
         {
             string query = @"UPDATE people SET num_mentions = num_mentions + 1  
@@ -183,6 +188,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //return for an reporter the number of reports and average chars of all reports 
         public (int num_reports,double avg_chars) GetReporterStats(int reporterId)
         {
             string query = @"SELECT COUNT(*) AS count, AVG(CHAR_LENGTH(text)) AS avgLength FROM intalreports WHERE reporter_id = @reporter_id";
@@ -209,15 +215,16 @@ namespace Malshinon.dal
             }
             return (0, 0);
         }
-        public (int,int) GetTargetStats(string secretCode)
+        //return for an target the sum of mentions in the last 15 minutes
+        public int GetTargetStats(string secretCode)
         {
-            string query = @"SELECT p.num_mentions AS totalMentions, COUNT(i.id) AS mentionsLast15Min
-                           FROM People p
-                           LEFT JOIN intelreports i
-                           ON i.target_id = p.id 
-                           AND i.timestamp >= NOW() - INTERVAL 15 MINUTE
-                           WHERE p.secret_code = @secret_code
-                           GROUP BY p.num_mentions";
+            string query = @"SELECT COUNT(i.id) AS mentionsLast15Min
+                             FROM people p
+                             LEFT JOIN intalreports i 
+                             ON i.target_id = p.id 
+                             AND i.timestamp >= NOW() - INTERVAL 15 MINUTE
+                             WHERE p.secret_code = @secret_code";
+            int mentionsLast15Min = 0;
             try
             {
                 this.Conn.Open();
@@ -226,24 +233,26 @@ namespace Malshinon.dal
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    int totalMentions = reader.GetInt32("totalMentions");
-                    int mentionsLast15Min = reader.GetInt32("mentionsLast15Min");
-                    return (totalMentions, mentionsLast15Min);
+                    mentionsLast15Min = reader.GetInt32("mentionsLast15Min");
+
                 }
+                reader.Close();
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error return statistic of reporter: " + ex.Message);
+                Console.WriteLine("Error retrieving target stats: " + ex.Message);
             }
             finally
             {
                 this.Conn.Close();
             }
-            return (0, 0);
+            return mentionsLast15Min;
         }
+        //updates the person's status in the table
         public void UpdateStatus(string firstName, string lastName, string status)
         {
-            string query = "UPDATE people SET type = @status WHERE first_name = @first_name AND last_name = @last_name";
+            string query = "UPDATE people SET type = @status WHERE first_name=@first_name AND last_name=@last_name";
             try
             {
                 this.Conn.Open();
@@ -262,6 +271,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //return an list of all people they are potential agents
         public List<People> AllPotentialAgents()
         {
             string query = "SELECT * FROM people WHERE type = 'potential_agent'";
@@ -297,7 +307,8 @@ namespace Malshinon.dal
             }
             return potentialList;
         }
-        public void MarkAsDangerous(string secretCode)
+        //update a person as dangerous (from true to false) by column is_tanger
+        public void MarkAsDangerous(string secret_code)
         {
             string query = @"UPDATE people 
                      SET is_dangerous = TRUE 
@@ -308,7 +319,7 @@ namespace Malshinon.dal
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
-                cmd.Parameters.AddWithValue("@secret_code", secretCode);
+                cmd.Parameters.AddWithValue("@secret_code", secret_code);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -320,6 +331,7 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
         }
+        //return an list of all people they dangers people
         public List<People> AllDangersPeople()
         {
             string query = "SELECT * FROM people WHERE is_dangerous = '1'";
@@ -354,6 +366,62 @@ namespace Malshinon.dal
                 this.Conn.Close();
             }
             return dangerslList;
+        }
+        //insert a worning alert of target in table alerts
+        public void InsertAlertOfTarget(int target_id)
+        {
+            string query = @"INSERT INTO alerts(target_id,alert)
+                           VALUES(@target_id,@alert)";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@target_id", target_id);
+                cmd.Parameters.AddWithValue("@alert", "Warning! Over 3 reports have been issued on this target in the last fifteen minutes!");
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error adding alert: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+        }
+        public void PrintAllAlerts()
+        {
+            string query = @"SELECT a.alert, p.first_name, p.last_name
+                             FROM alerts a
+                             JOIN people p 
+                             ON a.target_id = p.id";
+            try
+            {
+                this.Conn.Open();
+                var cmd = this.Command(query);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while(reader.Read())
+                {
+                    string first_name = reader.GetString("first_name");
+                    string last_name = reader.GetString("last_name");
+                    string alert = reader.GetString("alert");
+                    Console.WriteLine("========================================");
+                    Console.WriteLine($"ALERT ON: {first_name} {last_name}");
+                    Console.WriteLine("----------------------------------------");
+                    Console.WriteLine(alert);
+                    Console.WriteLine("========================================\n");
+                }
+                reader.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error printing alerts: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
         }
     }
 }
